@@ -48,12 +48,197 @@ void Sorting::parcing(double ages[], int size)
     file.close();
 }
 
-void Sorting::choice()
+
+void Sorting::all_kind()
+{
+    int select500 = sort500Items_select();
+    int select1000 = sort1000Items_select();
+    int select5000 = sort5000Items_select();
+    int bubble500 = sort500Items_bubble();
+    int bubble1000 = sort1000Items_bubble();
+    int bubble5000 = sort5000Items_bubble();
+    int insert500 = sort500Items_insertion();
+    int insert1000 = sort1000Items_insertion();
+    int insert5000 = sort5000Items_insertion();
+    int heap500 = sort500Items_heap();
+    int heap1000 = sort1000Items_heap();
+    int heap5000 = sort5000Items_heap();
+
+    QBarSeries *series = new QBarSeries;
+
+    auto set0 = new QBarSet("Выбором");
+    auto set1 = new QBarSet("Пузырьком");
+    auto set2 = new QBarSet("Вставками");
+    auto set3 = new QBarSet("Пирамидальная");
+
+    *set0 << select5000;
+    *set1 << bubble5000;
+    *set2 << insert5000;
+    *set3 << heap5000;
+
+    series->append(set0);
+    series->append(set1);
+    series->append(set2);
+    series->append(set3);
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("5к элементов");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis();
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    QBarSeries *series1 = new QBarSeries;
+
+    auto set01 = new QBarSet("Выбором");
+    auto set11 = new QBarSet("Пузырьком");
+    auto set21 = new QBarSet("Вставками");
+    auto set31 = new QBarSet("Пирамидальная");
+
+    *set01 << select1000;
+    *set11 << bubble1000;
+    *set21 << insert1000;
+    *set31 << heap1000;
+
+    series1->append(set01);
+    series1->append(set11);
+    series1->append(set21);
+    series1->append(set31);
+
+    QChart *chart1 = new QChart();
+    chart1->addSeries(series1);
+    chart1->setTitle("1к элементов");
+    chart1->setAnimationOptions(QChart::SeriesAnimations);
+
+    QBarCategoryAxis *axisX1 = new QBarCategoryAxis();
+    chart1->addAxis(axisX1, Qt::AlignBottom);
+    series1->attachAxis(axisX1);
+
+    QValueAxis *axisY1 = new QValueAxis();
+    chart1->addAxis(axisY1, Qt::AlignLeft);
+    series1->attachAxis(axisY1);
+
+    ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+
+
+    QBarSeries *series2 = new QBarSeries;
+
+    auto set02 = new QBarSet("Выбором");
+    auto set12 = new QBarSet("Пузырьком");
+    auto set22 = new QBarSet("Вставками");
+    auto set32 = new QBarSet("Пирамидальная");
+
+    *set02 << select500;
+    *set12 << bubble500;
+    *set22 << insert500;
+    *set32 << heap500;
+
+    series2->append(set02);
+    series2->append(set12);
+    series2->append(set22);
+    series2->append(set32);
+
+    QChart *chart2 = new QChart();
+    chart2->addSeries(series2);
+    chart2->setTitle("500 элементов");
+    chart2->setAnimationOptions(QChart::SeriesAnimations);
+
+    QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
+    chart2->addAxis(axisX2, Qt::AlignBottom);
+    series2->attachAxis(axisX2);
+
+    QValueAxis *axisY2 = new QValueAxis();
+    chart2->addAxis(axisY2, Qt::AlignLeft);
+    series2->attachAxis(axisY2);
+
+    chart->setMinimumSize(248, 380);
+    chart1->setMinimumSize(248, 380);
+    chart2->setMinimumSize(248, 380);
+
+    QVBoxLayout *layout3 = ui->verticalLayout_3;
+    QChartView *chartView3 = new QChartView(chart2);
+    layout3->addWidget(chartView3);
+
+    QVBoxLayout *layout2 = ui->verticalLayout_4;
+    QChartView *chartView1 = new QChartView(chart1);
+    layout2->addWidget(chartView1);
+
+    QVBoxLayout *layout = ui->verticalLayout_5;
+    QChartView *chartView = new QChartView(chart);
+    layout->addWidget(chartView);
+}
+
+
+int Sorting::sort500Items_select()
+{
+    const int size = 500;
+    double massive[size];
+    parcing(massive, size);
+
+    return choice(massive, size);
+}
+
+
+int Sorting::sort1000Items_select()
+{
+    const int size = 1000;
+    double massive[size];
+    parcing(massive, size);
+
+    return choice(massive, size);
+}
+
+
+int Sorting::sort5000Items_select()
 {
     const int size = 5000;
     double massive[size];
-
     parcing(massive, size);
+
+    return choice(massive, size);
+}
+
+
+int Sorting::sort500Items_bubble()
+{
+    const int size = 500;
+    double massive[size];
+    parcing(massive, size);
+
+    return bubble(massive, size);
+}
+
+
+int Sorting::sort1000Items_bubble()
+{
+    const int size = 1000;
+    double massive[size];
+    parcing(massive, size);
+
+    return bubble(massive, size);
+}
+
+
+int Sorting::sort5000Items_bubble()
+{
+    const int size = 5000;
+    double massive[size];
+    parcing(massive, size);
+
+    return bubble(massive, size);
+}
+
+
+int Sorting::choice(double massive[], int size)
+{
+    QElapsedTimer timer;
+    timer.start();
 
     for (int i = 0; i < size - 1; i++)
     {
@@ -71,8 +256,12 @@ void Sorting::choice()
         massive[i] = temp;
     }
 
-    print(massive, size);
+    qint64 elapsed = timer.nsecsElapsed();
+    qDebug() << "Time taken to sort the array of size(select) " << size << ": " << elapsed << " nsecs";
+
+    return elapsed;
 }
+
 
 void Sorting::print(double massive[], int size)
 {
@@ -84,12 +273,10 @@ void Sorting::print(double massive[], int size)
 }
 
 
-void Sorting::bubble()
+int Sorting::bubble(double massive[], int size)
 {
-    const int size = 5000;
-    double massive[size];
-
-    parcing(massive, size);
+    QElapsedTimer timer;
+    timer.start();
 
     for (int i = 0; i < size - 1; i++)
     {
@@ -103,16 +290,48 @@ void Sorting::bubble()
             }
         }
     }
-    print(massive, size);
+
+    qint64 elapsed = timer.nsecsElapsed();
+    qDebug() << "Time taken to sort the array of size(bubble) " << size << ": " << elapsed << " nsecs";
+
+    return elapsed;
 }
 
 
-void Sorting::insertion()
+int Sorting::sort500Items_insertion()
+{
+    const int size = 500;
+    double massive[size];
+    parcing(massive, size);
+
+    return insertion(massive, size);
+}
+
+
+int Sorting::sort1000Items_insertion()
+{
+    const int size = 1000;
+    double massive[size];
+    parcing(massive, size);
+
+    return insertion(massive, size);
+}
+
+
+int Sorting::sort5000Items_insertion()
 {
     const int size = 5000;
     double massive[size];
-
     parcing(massive, size);
+
+    return insertion(massive, size);
+}
+
+
+int Sorting::insertion(double massive[], int size)
+{
+    QElapsedTimer timer;
+    timer.start();
 
     double key;
     for (int i = 1; i < size; i++)
@@ -128,7 +347,10 @@ void Sorting::insertion()
         massive[j + 1] = key;
     }
 
-    print(massive, size);
+    qint64 elapsed = timer.nsecsElapsed();
+    qDebug() << "Time taken to sort the array of size(insertion) " << size << ": " << elapsed << " nsecs";
+
+    return elapsed;
 }
 
 /*
@@ -200,6 +422,36 @@ void Sorting::mergeSort(double massive[], int l, int r)
 }
 */
 
+
+int Sorting::sort500Items_heap()
+{
+    const int size = 500;
+    double massive[size];
+    parcing(massive, size);
+
+    return heap(massive, size);
+}
+
+
+int Sorting::sort1000Items_heap()
+{
+    const int size = 1000;
+    double massive[size];
+    parcing(massive, size);
+
+    return heap(massive, size);
+}
+
+
+int Sorting::sort5000Items_heap()
+{
+    const int size = 5000;
+    double massive[size];
+    parcing(massive, size);
+
+    return heap(massive, size);
+}
+
 void Sorting::heapify(double massive[], int size, int i)
 {
     int largest = i;
@@ -212,7 +464,8 @@ void Sorting::heapify(double massive[], int size, int i)
     if (r < size && massive[r] > massive[largest])
         largest = r;
 
-    if (largest != i) {
+    if (largest != i)
+    {
         double temp = massive[i];
         massive[i] = massive[largest];
         massive[largest] = temp;
@@ -221,12 +474,10 @@ void Sorting::heapify(double massive[], int size, int i)
 }
 
 
-void Sorting::heap()
+int Sorting::heap(double massive[], int size)
 {
-    const int size = 5000;
-    double massive[size];
-
-    parcing(massive, size);
+    QElapsedTimer timer;
+    timer.start();
 
     for (int i = size / 2 - 1; i >= 0; i--)
         heapify(massive, size, i);
@@ -239,7 +490,11 @@ void Sorting::heap()
         heapify(massive, i, 0);
     }
 
-    print(massive, size);
+    qint64 elapsed = timer.nsecsElapsed();
+    qDebug() << "Time taken to sort the array of size(heap) " << size << ": " << elapsed << " nsecs";
+
+    return elapsed;
+    //print(massive, size);
 }
 /*
 

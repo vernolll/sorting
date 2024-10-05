@@ -27,6 +27,7 @@ signals:
     void on_pushButton_choic_clicked();
     void on_pushButton_bubble_clicked();
     void on_pushButton_heap_clicked();
+    void on_pushButton_all_kind_clicked();
 
 private:
     Ui::MainWindow *ui;

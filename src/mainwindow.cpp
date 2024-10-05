@@ -9,9 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     CSort = new Sorting(ui, this);
 
-    connect(this, SIGNAL(on_pushButton_choic_clicked()), CSort, SLOT(choice()));
-    connect(this, SIGNAL(on_pushButton_bubble_clicked()), CSort, SLOT(bubble()));
-    connect(this, SIGNAL(on_pushButton_heap_clicked()), CSort, SLOT(heap()));
+    ui->stackedWidget->setCurrentWidget(ui->page_main);
+
+    //connect(this, SIGNAL(on_pushButton_choic_clicked()), CSort, SLOT(choice()));
+    //connect(this, SIGNAL(on_pushButton_bubble_clicked()), CSort, SLOT(bubble()));
+    //connect(this, SIGNAL(on_pushButton_heap_clicked()), CSort, SLOT(heap()));
+    connect(this, SIGNAL(on_pushButton_all_kind_clicked()), CSort, SLOT(all_kind()));
 }
 
 
