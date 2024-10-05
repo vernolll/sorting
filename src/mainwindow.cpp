@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(on_pushButton_pattern_clicked()), CSort, SLOT(choosed_pattern()));
     connect(this, SIGNAL(on_pushButton_lexic_clicked()), CSort, SLOT(lexic_alone()));
     connect(this, SIGNAL(on_pushButton_quick_clicked()), CSort, SLOT(quick_alone()));
-    connect(this, SIGNAL(on_pushButton_heap_clicked()), CSort, SLOT(heap_alpne()));
+    connect(this, SIGNAL(on_pushButton_heap_clicked()), CSort, SLOT(heap_alone()));
     connect(this, SIGNAL(on_pushButton_merge_clicked()), CSort, SLOT(merge_alone()));
     connect(this, SIGNAL(on_pushButton_insertion_clicked()), CSort, SLOT(insert_alone()));
     connect(this, SIGNAL(on_pushButton_bubble_clicked()), CSort, SLOT(bubble_alone()));
