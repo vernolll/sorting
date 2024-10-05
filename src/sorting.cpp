@@ -18,7 +18,8 @@ void Sorting::parcing_txt(QString* words, int maxSize)
 {
     std::ifstream file("D:/university/3 semestr/laba1_algos/build/1984-george-orwell.txt", std::ios::binary);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Failed to open file: D:/university/3 semestr/laba1_algos/build/1984-george-orwell.txt" << std::endl;
         return;
     }
@@ -52,6 +53,7 @@ void Sorting::parcing_txt(QString* words, int maxSize)
 void Sorting::parcing(double ages[], int size)
 {
     QString filePath = "D:/university/3 semestr/laba1_algos/build/adult.data.csv";
+
     QFile file(filePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -277,6 +279,8 @@ void Sorting::all_kind()
 
     QChartView *chartView = new QChartView(chart);
     layout->addWidget(chartView);
+
+    ui->pushButton_next->show();
 }
 
 
@@ -783,7 +787,6 @@ int Sorting::sortWords5000()
     lex_quickSort(words, 0, maxSize - 1);
 
     qint64 elapsed = timer.nsecsElapsed();
-
     return elapsed;
 }
 
@@ -802,13 +805,7 @@ void Sorting::back_to_diagrams()
 
 void Sorting::back_to_menu()
 {
-    ui->stackedWidget->setCurrentWidget(ui->page_menu);
-}
-
-
-void Sorting::choosed_pattern()
-{
-     ui->stackedWidget->setCurrentWidget(ui->page_main);
+    ui->stackedWidget->setCurrentWidget(ui->page_main);
 }
 
 
@@ -872,6 +869,7 @@ void Sorting::lexic_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -935,6 +933,7 @@ void Sorting::quick_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -998,6 +997,7 @@ void Sorting::heap_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -1061,6 +1061,7 @@ void Sorting::merge_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -1124,6 +1125,7 @@ void Sorting::insert_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -1187,6 +1189,7 @@ void Sorting::bubble_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
@@ -1250,4 +1253,5 @@ void Sorting::select_alone()
     QChartView *chartView = new QChartView(chart);
     layout3->addWidget(chartView);
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }

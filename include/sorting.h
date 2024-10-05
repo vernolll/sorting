@@ -18,6 +18,7 @@
 #include <codecvt>
 #include <cctype>
 #include <QLegend>
+#include <QMessageBox>
 
 #include "../ui/ui_mainwindow.h"
 
@@ -38,7 +39,6 @@ public slots:
     void next_page();
     void back_to_diagrams();
     void back_to_menu();
-    void choosed_pattern();
     void lexic_alone();
     void quick_alone();
     void heap_alone();
