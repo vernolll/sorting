@@ -28,6 +28,14 @@ signals:
     void on_pushButton_bubble_clicked();
     void on_pushButton_heap_clicked();
     void on_pushButton_all_kind_clicked();
+    void on_pushButton_lexic_clicked();
+    void on_pushButton_next_clicked();
+    void on_pushButton_clicked();
+    void on_pushButton_menu_clicked();
+    void on_pushButton_pattern_clicked();
+    void on_pushButton_quick_clicked();
+    void on_pushButton_merge_clicked();
+    void on_pushButton_insertion_clicked();
 
 private:
     Ui::MainWindow *ui;

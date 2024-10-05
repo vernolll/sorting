@@ -41,6 +41,9 @@ target_link_libraries(laba1_algos PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Charts)
 target_link_libraries(laba1_algos PRIVATE Qt6::Charts)
 
+find_package(Qt6 REQUIRED COMPONENTS Core)
+target_link_libraries(laba1_algos PRIVATE Qt6::Core)
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
