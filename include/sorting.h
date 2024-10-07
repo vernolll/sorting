@@ -52,40 +52,29 @@ private:
     QChartView *chartView;
 
     void parcing(double ages[], int size);
-    int choice(double massive[], int size);
-    int bubble(double massive[], int size);
-    int insertion(double massive[], int size);
+    void choice(double massive[], int size);
+    void bubble(double massive[], int size);
+    void insertion(double massive[], int size);
     void merge_(double massive[], int l, int m, int r);
     void mergeSort(double massive[], int l, int r);
     void heapify(double massive[], int size, int i) ;
-    int heap(double massive[], int size);
+    void heap(double massive[], int size);
     void quickSort(double arr[], int low, int high);
-    void parcing_txt(QString* words, int maxSize);
-    bool compareWords(const QString& word1, const QString& word2);
-    void lex_quickSort(QString* words, int left, int right);
+    void parcing_txt(char** words, int maxSize);
+    bool compareWords(const char* word1, const char* word2);
+    void lex_quickSort(char** words, int left, int right);
 
 
-    int sort500Items_select();
-    int sort1000Items_select();
-    int sort5000Items_select();
-    int sort500Items_bubble();
-    int sort1000Items_bubble();
-    int sort5000Items_bubble();
-    int sort500Items_insertion();
-    int sort1000Items_insertion();
-    int sort5000Items_insertion();
-    int sort500Items_merge();
-    int sort1000Items_merge();
-    int sort5000Items_merge();
-    int sort500Items_heap();
-    int sort1000Items_heap();
-    int sort5000Items_heap();
-    int sort500Items_quickSort();
-    int sort1000Items_quickSort();
-    int sort5000Items_quickSort();
-    int sortWords1000();
-    int sortWords500();
-    int sortWords5000();
+    QVector<qint64> sortItems_select();
+    QVector<qint64> sortItems_bubble();
+    QVector<qint64> sortItems_insertion();
+    QVector<qint64> sortItems_merge();
+    QVector<qint64> sortItems_heap();
+    QVector<qint64> sortItems_quickSort();
+    QVector<qint64> sortWords();
+
+    void sortingHelper(std::function<QList<long long>()> sortingFunction, const QString& title);
+    QVector<qint64> sortItems(std::function<void(double*, int)> sortFunction);
 };
 
 #endif // SORTING_H
