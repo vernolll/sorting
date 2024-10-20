@@ -80,7 +80,7 @@ void Sorting::parcing(double ages[], int size)
     file.close();
 }
 
-
+/*
 void Sorting::all_kind()
 {
     QList<long long> items_select = sortItems_select();
@@ -263,16 +263,26 @@ void Sorting::all_kind()
 
     ui->pushButton_next->show();
 }
+*/
 
 
-QVector<qint64> Sorting::sortItems(std::function<void(double*, int)> sortFunction)
+
+template<typename T>
+QVector<qint64> Sorting::sortItems(std::function<void(T*, int)> sortFunction)
 {
     const QVector<int>& sizes = {500, 1000, 500};
     QVector<qint64> arr;
 
     for (int size : sizes) {
-        double* massive = new double[size];
-        parcing(massive, size);
+        T* massive = new T[size];
+
+        if constexpr (std::is_same<T, double>::value)
+        {
+            parcing(massive, size);
+        } else if constexpr (std::is_same<T, char*>::value)
+        {
+            parcing_txt(massive, size);
+        }
 
         QElapsedTimer timer;
         timer.start();
@@ -286,36 +296,104 @@ QVector<qint64> Sorting::sortItems(std::function<void(double*, int)> sortFunctio
     return arr;
 }
 
-
+template<typename T>
 QVector<qint64> Sorting::sortItems_select()
 {
-    return sortItems([this](double* massive, int size) { choice(massive, size); });
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { choice(massive, size); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { choice(massive, size); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_select");
+    }
 }
 
 
-QVector<qint64> Sorting::sortItems_bubble()
+void Sorting::select_alone()
 {
-    return sortItems([this](double* massive, int size) { bubble(massive, size); });
+    std::vector<std::function<QList<long long>()>> sortingFunctions =
+        {
+        [this]() -> QList<long long>
+        {
+            return sortItems_select<double>();
+        },
+        [this]() -> QList<long long>
+        {
+            return sortItems_select<char*>();
+        }
+    };
+
+    QStringList titles =
+        {
+        "Сортировка выбором для чисел (double)",
+        "Сортировка выбором для строк (char*)"
+    };
+
+    QVBoxLayout *layout3 = ui->verticalLayout_3;
+    QLayoutItem *item;
+
+    while ((item = layout3->takeAt(0)) != nullptr)
+    {
+        if (item->widget()) {
+            delete item->widget();
+        }
+        delete item;
+    }
+
+    QHBoxLayout *hLayout = new QHBoxLayout();
+
+    for (int i = 0; i < sortingFunctions.size(); ++i)
+    {
+        auto chartView = sortingHelper(sortingFunctions[i], titles[i]);
+        hLayout->addWidget(chartView);
+    }
+
+    layout3->addLayout(hLayout);
+
+    ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
 
 
-void Sorting::choice(double massive[], int size)
+template<typename T>
+void Sorting::choice(T* massive, int size)
 {
     for (int i = 0; i < size - 1; i++)
     {
         int minIndex = i;
+
         for (int j = i + 1; j < size; j++)
         {
-            if (massive[j] < massive[minIndex])
+            if constexpr (std::is_same<T, double>::value)
             {
-                minIndex = j;
+                if (massive[j] < massive[minIndex])
+                {
+                    minIndex = j;
+                }
+            } else if constexpr (std::is_same<T, char*>::value)
+            {
+                if (strcmp(massive[j], massive[minIndex]) < 0)
+                {
+                    minIndex = j;
+                }
             }
         }
 
-        double temp = massive[minIndex];
+        T temp = massive[minIndex];
         massive[minIndex] = massive[i];
         massive[i] = temp;
     }
+}
+
+/*
+QVector<qint64> Sorting::sortItems_bubble()
+{
+    return sortItems([this](double* massive, int size) { bubble(massive, size); });
 }
 
 
@@ -589,7 +667,7 @@ QVector<qint64> Sorting::sortWords()
 
     return arr;
 }
-
+*/
 
 void Sorting::next_page()
 {
@@ -609,32 +687,8 @@ void Sorting::back_to_menu()
 }
 
 
-void Sorting::sortingHelper(std::function<QList<long long>()> sortingFunction, const QString& title)
+QChartView* Sorting::sortingHelper(std::function<QList<long long>()> sortingFunction, const QString& title)
 {
-    QVBoxLayout *layout3 = ui->verticalLayout_3;
-    QLayoutItem *item;
-
-    while ((item = layout3->takeAt(0)) != nullptr)
-    {
-        if (item->widget())
-        {
-            delete item->widget();
-        }
-        delete item;
-    }
-
-    QVBoxLayout *layout4 = ui->verticalLayout_4;
-    QLayoutItem *item4;
-
-    while ((item4 = layout4->takeAt(0)) != nullptr)
-    {
-        if (item4->widget())
-        {
-            delete item4->widget();
-        }
-        delete item4;
-    }
-
     QList<long long> items = sortingFunction();
     long long w500 = items[0];
     long long w1000 = items[1];
@@ -649,7 +703,6 @@ void Sorting::sortingHelper(std::function<QList<long long>()> sortingFunction, c
     *set2 << w5000;
 
     QBarSeries *series = new QBarSeries;
-
     series->append(set0);
     series->append(set1);
     series->append(set2);
@@ -668,12 +721,10 @@ void Sorting::sortingHelper(std::function<QList<long long>()> sortingFunction, c
     series->attachAxis(axisY);
 
     QChartView *chartView = new QChartView(chart);
-    layout3->addWidget(chartView);
-    ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
-    ui->pushButton_next->hide();
+    return chartView;
 }
 
-
+/*
 void Sorting::lexic_alone()
 {
     sortingHelper([this]() { return sortWords(); }, "Лексикографическая быстрая сортировка");
@@ -709,8 +760,4 @@ void Sorting::bubble_alone()
     sortingHelper([this]() { return sortItems_bubble(); }, "Сортировка пузырьком");
 }
 
-
-void Sorting::select_alone()
-{
-    sortingHelper([this]() { return sortItems_select(); }, "Сортировка выбором");
-}
+*/
