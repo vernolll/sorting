@@ -35,20 +35,17 @@ public:
     ~Sorting();
 
 public slots:
-
-    //void all_kind();
+    void all_kind();
     void next_page();
+    void next_diagram();;
     void back_to_diagrams();
     void back_to_menu();
-    /*
-    void lexic_alone();
-    void quick_alone();
+    void bubble_alone();
+    void select_alone();
+    void insert_alone();
     void heap_alone();
     void merge_alone();
-    void insert_alone();
-    void bubble_alone();*/
-    void select_alone();
-
+    void quick_alone();
 
 private:
     Ui::MainWindow *ui;
@@ -58,32 +55,43 @@ private:
     void parcing(double ages[], int size);
     template<typename T>
     void choice(T* massive, int size);
-    /*
-    void bubble(double massive[], int size);
-    void insertion(double massive[], int size);
-    void merge_(double massive[], int l, int m, int r);
-    void mergeSort(double massive[], int l, int r);
-    void heapify(double massive[], int size, int i) ;
-    void heap(double massive[], int size);
-    void quickSort(double arr[], int low, int high)
-    bool compareWords(const char* word1, const char* word2);
-    void lex_quickSort(char** words, int left, int right);
-*/
+    template<typename T>
+    void bubble(T* massive, int size);
+    template<typename T>
+    void insertion(T* massive, int size);
+    template<typename T>
+    void heap(T* massive, int size);
+    template<typename T>
+    void heapify(T* massive, int size, int i) ;
+    template<typename T>
+    void merge_(T* massive, int l, int m, int r);
+    template<typename T>
+    void mergeSort(T* massive, int l, int r);
+    template<typename T>
+    void quickSort(T* arr, int low, int high);
 
     template<typename T>
     QVector<qint64> sortItems_select();
-    /*
+    template<typename T>
     QVector<qint64> sortItems_bubble();
+    template<typename T>
     QVector<qint64> sortItems_insertion();
-    QVector<qint64> sortItems_merge();
+    template<typename T>
     QVector<qint64> sortItems_heap();
+    template<typename T>
+    QVector<qint64> sortItems_merge();
+    template<typename T>
     QVector<qint64> sortItems_quickSort();
-    QVector<qint64> sortWords();
-*/
+
+
     QChartView* sortingHelper(std::function<QList<long long>()> sortingFunction, const QString& title);
 
     template<typename T>
     QVector<qint64> sortItems(std::function<void(T*, int)> sortFunction);
+
+    void displaySortingResults(
+        const std::vector<std::function<QList<long long>()>>& sortingFunctions,
+        const QStringList& titles);
 };
 
 #endif // SORTING_H

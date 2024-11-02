@@ -80,192 +80,147 @@ void Sorting::parcing(double ages[], int size)
     file.close();
 }
 
-/*
+
 void Sorting::all_kind()
 {
-    QList<long long> items_select = sortItems_select();
-    QList<long long> items_bubble = sortItems_bubble();
-    QList<long long> items_insertion = sortItems_insertion();
-    QList<long long> items_heap = sortItems_heap();
-    QList<long long> items_merge = sortItems_merge();
-    QList<long long> items_quick = sortItems_quickSort();
-    QList<long long> items_words = sortWords();
+    QVector<QPair<QString, std::function<QList<long long>()>> > sortingMethods;
 
-    QBarSeries *series = new QBarSeries;
+    sortingMethods.push_back(qMakePair(QString("dВыбором"), [this]() { return sortItems_select<double>(); }));
+    sortingMethods.push_back(qMakePair(QString("Пузырьком"), [this]() { return sortItems_bubble<double>(); }));
+    sortingMethods.push_back(qMakePair(QString("Вставками"), [this]() { return sortItems_insertion<double>(); }));
+    sortingMethods.push_back(qMakePair(QString("Пирамидальная"), [this]() { return sortItems_heap<double>(); }));
+    sortingMethods.push_back(qMakePair(QString("Слиянием"), [this]() { return sortItems_merge<double>(); }));
+    sortingMethods.push_back(qMakePair(QString("Быстрая"), [this]() { return sortItems_quickSort<double>(); }));
 
-    auto set0 = new QBarSet("Выбором");
-    auto set1 = new QBarSet("Пузырьком");
-    auto set2 = new QBarSet("Вставками");
-    auto set3 = new QBarSet("Пирамидальная");
-    auto set4 = new QBarSet("Слиянием");
-    auto set5 = new QBarSet("Быстрая");
-    auto set6 = new QBarSet("Лексикографическая");
+    sortingMethods.push_back(qMakePair(QString("cВыбором"), [this]() { return sortItems_select<char*>(); }));
+    sortingMethods.push_back(qMakePair(QString("Пузырьком"), [this]() { return sortItems_bubble<char*>(); }));
+    sortingMethods.push_back(qMakePair(QString("Вставками"), [this]() { return sortItems_insertion<char*>(); }));
+    sortingMethods.push_back(qMakePair(QString("Пирамидальная"), [this]() { return sortItems_heap<char*>(); }));
+    sortingMethods.push_back(qMakePair(QString("Слиянием"), [this]() { return sortItems_merge<char*>(); }));
+    sortingMethods.push_back(qMakePair(QString("Быстрая"), [this]() { return sortItems_quickSort<char*>(); }));
 
-    *set0 << items_select[2];
-    *set1 << items_bubble[2];
-    *set2 << items_insertion[2];
-    *set3 << items_heap[2];
-    *set4 << items_merge[2];
-    *set5 << items_quick[2];
-    *set6 << items_words[2];
+    QStringList chartTitles = {"500 элементов", "1к элементов", "5к элементов"};
 
-    series->append(set0);
-    series->append(set1);
-    series->append(set2);
-    series->append(set3);
-    series->append(set4);
-    series->append(set5);
-    series->append(set6);
+    QVector<QVBoxLayout*> layouts = {
+        ui->verticalLayout_500_double,
+        ui->verticalLayout_500_char,
+        ui->verticalLayout_1k_double,
+        ui->verticalLayout_1k_char,
+        ui->verticalLayout_5k_double,
+        ui->verticalLayout_5k_char
+    };
 
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("5к элементов");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
+    for (auto layout : layouts)
+    {
+        QLayoutItem *item;
+        while ((item = layout->takeAt(0)) != nullptr)
+        {
+            if (item->widget()) delete item->widget();
+            delete item;
+        }
+    }
 
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
+    int layoutIndex = 0;
 
-    QValueAxis *axisY = new QValueAxis();
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
+    for (int sizeIndex = 0; sizeIndex < 3; ++sizeIndex)
+    {
+        for (int typeIndex = 0; typeIndex < 2; ++typeIndex)
+        {
+            QBarSeries *series = new QBarSeries;
 
-    QBarSeries *series1 = new QBarSeries;
+            for (int methodIndex = 0; methodIndex < 6; ++methodIndex)
+            {
+                QList<long long> times;
+                if (typeIndex == 0)
+                {
+                    times = sortingMethods[methodIndex].second();
+                }
+                else
+                {
+                    times = sortingMethods[methodIndex + 6].second();
+                }
 
-    auto set01 = new QBarSet("Выбором");
-    auto set11 = new QBarSet("Пузырьком");
-    auto set21 = new QBarSet("Вставками");
-    auto set31 = new QBarSet("Пирамидальная");
-    auto set41 = new QBarSet("Слиянием");
-    auto set51 = new QBarSet("Быстрая");
-    auto set61 = new QBarSet("Лексикографическая");
+                auto *barSet = new QBarSet(sortingMethods[methodIndex + typeIndex * 6].first);
+                *barSet << times[sizeIndex];
+                series->append(barSet);
+            }
 
-    *set01 << items_select[1];
-    *set11 << items_bubble[1];
-    *set21 << items_insertion[1];
-    *set31 << items_heap[1];
-    *set41 << items_merge[1];
-    *set51 << items_quick[1];
-    *set61 << items_words[1];
+            QChart *chart = new QChart();
+            chart->addSeries(series);
+            chart->setTitle(chartTitles[sizeIndex]);
+            chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    series1->append(set01);
-    series1->append(set11);
-    series1->append(set21);
-    series1->append(set31);
-    series1->append(set41);
-    series1->append(set51);
-    series1->append(set61);
+            QBarCategoryAxis *axisX = new QBarCategoryAxis();
+            chart->addAxis(axisX, Qt::AlignBottom);
+            series->attachAxis(axisX);
 
-    QChart *chart1 = new QChart();
-    chart1->addSeries(series1);
-    chart1->setTitle("1к элементов");
-    chart1->setAnimationOptions(QChart::SeriesAnimations);
+            QValueAxis *axisY = new QValueAxis();
+            chart->addAxis(axisY, Qt::AlignLeft);
+            series->attachAxis(axisY);
 
-    QBarCategoryAxis *axisX1 = new QBarCategoryAxis();
-    chart1->addAxis(axisX1, Qt::AlignBottom);
-    series1->attachAxis(axisX1);
+            if (typeIndex == 0)
+            {
+                layouts[layoutIndex]->addWidget(new QChartView(chart));
+            }
+            else
+            {
+                layouts[layoutIndex]->addWidget(new QChartView(chart));
+            }
 
-    QValueAxis *axisY1 = new QValueAxis();
-    chart1->addAxis(axisY1, Qt::AlignLeft);
-    series1->attachAxis(axisY1);
+            layoutIndex++;
+        }
+    }
 
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->show();
+}
 
 
-    QBarSeries *series2 = new QBarSeries;
+void Sorting::displaySortingResults(
+    const std::vector<std::function<QList<long long>()>>& sortingFunctions,
+    const QStringList& titles)
+{
+    QVBoxLayout *layoutDouble = ui->verticalLayout_500_double;
+    QVBoxLayout *layoutChar = ui->verticalLayout_500_char;
+    QLayoutItem *item;
 
-    auto set02 = new QBarSet("Выбором");
-    auto set12 = new QBarSet("Пузырьком");
-    auto set22 = new QBarSet("Вставками");
-    auto set32 = new QBarSet("Пирамидальная");
-    auto set42 = new QBarSet("Слиянием");
-    auto set52 = new QBarSet("Быстрая");
-    auto set62 = new QBarSet("Лексикографическая");
-
-    *set02 << items_select[0];
-    *set12 << items_bubble[0];
-    *set22 << items_insertion[0];
-    *set32 << items_heap[0];
-    *set42 << items_merge[0];
-    *set52 << items_quick[0];
-    *set62 << items_words[0];
-
-    series2->append(set02);
-    series2->append(set12);
-    series2->append(set22);
-    series2->append(set32);
-    series2->append(set42);
-    series2->append(set52);
-    series2->append(set62);
-
-    QChart *chart2 = new QChart();
-    chart2->addSeries(series2);
-    chart2->setTitle("500 элементов");
-    chart2->setAnimationOptions(QChart::SeriesAnimations);
-
-    QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
-    chart2->addAxis(axisX2, Qt::AlignBottom);
-    series2->attachAxis(axisX2);
-
-    QValueAxis *axisY2 = new QValueAxis();
-    chart2->addAxis(axisY2, Qt::AlignLeft);
-    series2->attachAxis(axisY2);
-
-    QLegend* legend = chart->legend();
-    legend->setMinimumWidth(500);
-
-    chart2->setMinimumSize(605, 567);
-    chart1->setMinimumSize(605, 567);
-    chart->setMinimumSize(605*2, 567);
-
-    QLayoutItem *item2, *item3, *item;
-
-    QVBoxLayout *layout3 = ui->verticalLayout_3;
-    QVBoxLayout *layout2 = ui->verticalLayout_4;
-    QVBoxLayout *layout = ui->verticalLayout_5;
-
-    while ((item = layout3->takeAt(0)) != nullptr)
+    while ((item = layoutDouble->takeAt(0)) != nullptr)
     {
-        if (item->widget())
-        {
+        if (item->widget()) {
             delete item->widget();
         }
         delete item;
     }
 
-    while ((item2 = layout2->takeAt(0)) != nullptr)
+    while ((item = layoutChar->takeAt(0)) != nullptr)
     {
-        if (item2->widget())
-        {
-            delete item2->widget();
+        if (item->widget()) {
+            delete item->widget();
         }
-        delete item2;
+        delete item;
     }
 
-    while ((item3 = layout->takeAt(0)) != nullptr)
+    QHBoxLayout *hLayoutDouble = new QHBoxLayout();
+    QHBoxLayout *hLayoutChar = new QHBoxLayout();
+
+    if (sortingFunctions.size() >= 1)
     {
-        if (item3->widget())
-        {
-            delete item3->widget();
-        }
-        delete item3;
+        auto chartViewDouble = sortingHelper(sortingFunctions[0], titles[0]);
+        hLayoutDouble->addWidget(chartViewDouble);
     }
 
+    if (sortingFunctions.size() >= 2)
+    {
+        auto chartViewChar = sortingHelper(sortingFunctions[1], titles[1]);
+        hLayoutChar->addWidget(chartViewChar);
+    }
 
-    QChartView *chartView3 = new QChartView(chart2);
-    layout3->addWidget(chartView3);
+    layoutDouble->addLayout(hLayoutDouble);
+    layoutChar->addLayout(hLayoutChar);
 
-    QChartView *chartView1 = new QChartView(chart1);
-    layout2->addWidget(chartView1);
-
-    QChartView *chartView = new QChartView(chart);
-    layout->addWidget(chartView);
-
-    ui->pushButton_next->show();
+    ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
+    ui->pushButton_next->hide();
 }
-*/
-
-
 
 template<typename T>
 QVector<qint64> Sorting::sortItems(std::function<void(T*, int)> sortFunction)
@@ -318,45 +273,17 @@ void Sorting::select_alone()
 {
     std::vector<std::function<QList<long long>()>> sortingFunctions =
         {
-        [this]() -> QList<long long>
-        {
-            return sortItems_select<double>();
-        },
-        [this]() -> QList<long long>
-        {
-            return sortItems_select<char*>();
-        }
-    };
+            [this]() -> QList<long long> { return sortItems_select<double>(); },
+            [this]() -> QList<long long> { return sortItems_select<char*>(); }
+        };
 
     QStringList titles =
         {
-        "Сортировка выбором для чисел (double)",
-        "Сортировка выбором для строк (char*)"
-    };
+            "Сортировка выбором для чисел (double)",
+            "Сортировка выбором для строк (char*)"
+        };
 
-    QVBoxLayout *layout3 = ui->verticalLayout_3;
-    QLayoutItem *item;
-
-    while ((item = layout3->takeAt(0)) != nullptr)
-    {
-        if (item->widget()) {
-            delete item->widget();
-        }
-        delete item;
-    }
-
-    QHBoxLayout *hLayout = new QHBoxLayout();
-
-    for (int i = 0; i < sortingFunctions.size(); ++i)
-    {
-        auto chartView = sortingHelper(sortingFunctions[i], titles[i]);
-        hLayout->addWidget(chartView);
-    }
-
-    layout3->addLayout(hLayout);
-
-    ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
-    ui->pushButton_next->hide();
+    displaySortingResults(sortingFunctions, titles);
 }
 
 
@@ -390,14 +317,25 @@ void Sorting::choice(T* massive, int size)
     }
 }
 
-/*
+template<typename T>
 QVector<qint64> Sorting::sortItems_bubble()
 {
-    return sortItems([this](double* massive, int size) { bubble(massive, size); });
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { bubble(massive, size); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { bubble(massive, size); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_select");
+    }
 }
 
-
-void Sorting::bubble(double massive[], int size)
+template<typename T>
+void Sorting::bubble(T* massive, int size)
 {
     for (int i = 0; i < size - 1; i++)
     {
@@ -405,7 +343,7 @@ void Sorting::bubble(double massive[], int size)
         {
             if (massive[j] > massive[j + 1])
             {
-                double temp = massive[j];
+                T temp = massive[j];
                 massive[j] = massive[j + 1];
                 massive[j + 1] = temp;
             }
@@ -413,16 +351,44 @@ void Sorting::bubble(double massive[], int size)
     }
 }
 
-
-QVector<qint64> Sorting::sortItems_insertion()
+void Sorting::bubble_alone()
 {
-    return sortItems([this](double* massive, int size) { insertion(massive, size); });
+    std::vector<std::function<QList<long long>()>> sortingFunctions =
+        {
+            [this]() -> QList<long long> { return sortItems_bubble<double>(); },
+            [this]() -> QList<long long> { return sortItems_bubble<char*>(); }
+        };
+
+    QStringList titles =
+        {
+            "Сортировка пузырьком для чисел (double)",
+            "Сортировка пузырьком для строк (char*)"
+        };
+
+    displaySortingResults(sortingFunctions, titles);
 }
 
-
-void Sorting::insertion(double massive[], int size)
+template<typename T>
+QVector<qint64> Sorting::sortItems_insertion()
 {
-    double key;
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { insertion(massive, size); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { insertion(massive, size); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_select");
+    }
+}
+
+template<typename T>
+void Sorting::insertion(T* massive, int size)
+{
+    T key;
     for (int i = 1; i < size; i++)
     {
         key = massive[i];
@@ -438,13 +404,114 @@ void Sorting::insertion(double massive[], int size)
 }
 
 
-QVector<qint64> Sorting::sortItems_merge()
+void Sorting::insert_alone()
 {
-    return sortItems([this](double* massive, int size) { mergeSort(massive, 0, size - 1); });
+    std::vector<std::function<QList<long long>()>> sortingFunctions =
+        {
+            [this]() -> QList<long long> { return sortItems_insertion<double>(); },
+            [this]() -> QList<long long> { return sortItems_insertion<char*>(); }
+        };
+
+    QStringList titles =
+        {
+            "Сортировка вставками для чисел (double)",
+            "Сортировка вставками для строк (char*)"
+        };
+
+    displaySortingResults(sortingFunctions, titles);
+}
+
+template<typename T>
+QVector<qint64> Sorting::sortItems_heap()
+{
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { heap(massive, size); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { heap(massive, size); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_select");
+    }
+}
+
+template<typename T>
+void Sorting::heapify(T* massive, int size, int i)
+{
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < size && massive[l] > massive[largest])
+        largest = l;
+
+    if (r < size && massive[r] > massive[largest])
+        largest = r;
+
+    if (largest != i)
+    {
+        T temp = massive[i];
+        massive[i] = massive[largest];
+        massive[largest] = temp;
+        heapify(massive, size, largest);
+    }
+}
+
+template<typename T>
+void Sorting::heap(T* massive, int size)
+{
+    for (int i = size / 2 - 1; i >= 0; i--)
+        heapify(massive, size, i);
+
+    for (int i = size - 1; i > 0; i--)
+    {
+        T temp = massive[0];
+        massive[0] = massive[i];
+        massive[i] = temp;
+        heapify(massive, i, 0);
+    }
 }
 
 
-void Sorting::merge_(double massive[], int l, int m, int r)
+void Sorting::heap_alone()
+{
+    std::vector<std::function<QList<long long>()>> sortingFunctions =
+        {
+            [this]() -> QList<long long> { return sortItems_insertion<double>(); },
+            [this]() -> QList<long long> { return sortItems_insertion<char*>(); }
+        };
+
+    QStringList titles =
+        {
+            "Пирамидальная сортировка для чисел (double)",
+            "Пирамидальная сортировка для строк (char*)"
+        };
+
+    displaySortingResults(sortingFunctions, titles);
+}
+
+template<typename T>
+QVector<qint64> Sorting::sortItems_merge()
+{
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { mergeSort(massive, 0, size - 1); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { mergeSort(massive, 0, size - 1); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_merge");
+    }
+}
+
+template<typename T>
+void Sorting::merge_(T* massive, int l, int m, int r)
 {
     int i, j, k;
     // вычисление длины левой части массива
@@ -452,8 +519,8 @@ void Sorting::merge_(double massive[], int l, int m, int r)
     // вычисление длины правой части массива
     int n2 = r - m;
 
-    double* L = new double[n1];
-    double* R = new double[n2];
+    T* L = new T[n1];
+    T* R = new T[n2];
 
     for (i = 0; i < n1; i++)
         L[i] = massive[l + i];
@@ -496,76 +563,82 @@ void Sorting::merge_(double massive[], int l, int m, int r)
     delete[] R;
 }
 
-
-void Sorting::mergeSort(double massive[], int l, int r)
+template<typename T>
+void Sorting::mergeSort(T* massive, int l, int r)
 {
-    // вычисление индекса середины массива
+    const int threshold = 1000;  // Порог для однопоточной сортировки
     if (l < r)
     {
         int m = l + (r - l) / 2;
 
-        mergeSort(massive, l, m);
-        mergeSort(massive, m + 1, r);
+        // Используем многопоточность только для крупных подмассивов
+        if (r - l > threshold)
+        {
+            // Запускаем левую часть в отдельном потоке
+            auto leftFuture = std::async(std::launch::async, &Sorting::mergeSort<T>, this, massive, l, m);
 
+            // Выполняем правую часть текущим потоком
+            mergeSort(massive, m + 1, r);
+
+            // Ожидаем завершения левой части
+            leftFuture.get();
+        }
+        else
+        {
+            // Однопоточная сортировка для небольших массивов
+            mergeSort(massive, l, m);
+            mergeSort(massive, m + 1, r);
+        }
+
+        // Слияние отсортированных подмассивов
         merge_(massive, l, m, r);
     }
 }
 
 
-QVector<qint64> Sorting::sortItems_heap()
+void Sorting::merge_alone()
 {
-    return sortItems([this](double* massive, int size) { heap(massive, size); });
+    std::vector<std::function<QList<long long>()>> sortingFunctions =
+        {
+            [this]() -> QList<long long> { return sortItems_merge<double>(); },
+            [this]() -> QList<long long> { return sortItems_merge<char*>(); }
+        };
+
+    QStringList titles =
+        {
+            "Сортировка слиянием для чисел (double)",
+            "Сортировка слиянием для строк (char*)"
+        };
+
+    displaySortingResults(sortingFunctions, titles);
 }
 
 
-void Sorting::heapify(double massive[], int size, int i)
-{
-    int largest = i;
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
-
-    if (l < size && massive[l] > massive[largest])
-        largest = l;
-
-    if (r < size && massive[r] > massive[largest])
-        largest = r;
-
-    if (largest != i)
-    {
-        double temp = massive[i];
-        massive[i] = massive[largest];
-        massive[largest] = temp;
-        heapify(massive, size, largest);
-    }
-}
-
-void Sorting::heap(double massive[], int size)
-{
-    for (int i = size / 2 - 1; i >= 0; i--)
-        heapify(massive, size, i);
-
-    for (int i = size - 1; i > 0; i--)
-    {
-        double temp = massive[0];
-        massive[0] = massive[i];
-        massive[i] = temp;
-        heapify(massive, i, 0);
-    }
-}
-
-
+template<typename T>
 QVector<qint64> Sorting::sortItems_quickSort()
 {
-    return sortItems([this](double* massive, int size) { quickSort(massive, 0, size - 1); });
+    if constexpr (std::is_same<T, double>::value)
+    {
+        return sortItems<double>([this](double* massive, int size) { quickSort(massive, 0, size - 1); });
+    }
+    else if constexpr (std::is_same<T, char*>::value)
+    {
+        return sortItems<char*>([this](char** massive, int size) { quickSort(massive, 0, size - 1); });
+    }
+    else
+    {
+        static_assert(std::is_same<T, double>::value || std::is_same<T, char*>::value, "Unsupported type for sortItems_quickSort");
+    }
 }
 
-
-
-void Sorting::quickSort(double arr[], int low, int high)
+template<typename T>
+void Sorting::quickSort(T* arr, int low, int high)
 {
+    const int threshold = 1000; // Порог для включения многопоточности
+
     if (low < high)
     {
-        double pivot = arr[high];
+        T pivot = arr[high];
         int i = low - 1;
 
         for (int j = low; j < high; j++)
@@ -573,101 +646,45 @@ void Sorting::quickSort(double arr[], int low, int high)
             if (arr[j] < pivot)
             {
                 i++;
-                double temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
+                std::swap(arr[i], arr[j]);
             }
         }
 
-        double temp = arr[i + 1];
-        arr[i + 1] = arr[high];
-        arr[high] = temp;
-
+        std::swap(arr[i + 1], arr[high]);
         int partitionIndex = i + 1;
 
-        quickSort(arr, low, partitionIndex - 1);
-        quickSort(arr, partitionIndex + 1, high);
-    }
-}
-
-
-bool Sorting::compareWords(const char* word1, const char* word2)
-{
-    while (*word1 && *word2 && *word1 == *word2)
-    {
-        ++word1;
-        ++word2;
-    }
-
-    return (*word1 - *word2) > 0;
-}
-
-
-void Sorting::lex_quickSort(char** words, int left, int right)
-{
-    if (left < right)
-    {
-        int i = left, j = right;
-        const char* pivot = words[(left + right) / 2];
-
-        while (i <= j)
+        // Если размер подмассива больше порога, выполняем многопоточную сортировку
+        if (high - low > threshold)
         {
-            while (compareWords(words[i], pivot)) i++;
-            while (compareWords(pivot, words[j])) j--;
-
-            if (i <= j)
-            {
-                char* temp = words[i];
-                words[i] = words[j];
-                words[j] = temp;
-                i++;
-                j--;
-            }
+            auto leftFuture = std::async(std::launch::async, &Sorting::quickSort<T>, this, arr, low, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, high);
+            leftFuture.get(); // Ждем завершения левой части
         }
-
-        if (left < j) lex_quickSort(words, left, j);
-        if (i < right) lex_quickSort(words, i, right);
+        else
+        {
+            // Однопоточная сортировка для небольших массивов
+            quickSort(arr, low, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, high);
+        }
     }
 }
 
-
-QVector<qint64> Sorting::sortWords()
+void Sorting::quick_alone()
 {
-    QVector<qint64> arr;
+    std::vector<std::function<QVector<qint64>()>> sortingFunctions =
+        {
+            [this]() -> QVector<qint64> { return sortItems_quickSort<double>(); },
+            [this]() -> QVector<qint64> { return sortItems_quickSort<char*>(); }
+        };
 
-    const int size = 500;
-    char* massive[size];
-    parcing_txt(massive, size);
+    QStringList titles =
+        {
+            "Быстрая сортировка для чисел (double)",
+            "Быстрая сортировка для строк (char*)"
+        };
 
-    QElapsedTimer timer;
-    timer.start();
-    lex_quickSort(massive, 0, size - 1);
-    qint64 elapsed = timer.nsecsElapsed();
-    arr.append(elapsed);
-
-    const int size1 = 1000;
-    char* massive1[size];
-    parcing_txt(massive1, size1);
-
-    QElapsedTimer timer1;
-    timer1.start();
-    lex_quickSort(massive1, 0, size1 - 1);
-    qint64 elapsed1 = timer1.nsecsElapsed();
-    arr.append(elapsed1);
-
-    const int size2 = 5000;
-    char* massive2[size2];
-    parcing_txt(massive2, size2);
-
-    QElapsedTimer timer2;
-    timer2.start();
-    lex_quickSort(massive1, 0, size1 - 1);
-    qint64 elapsed2 = timer2.nsecsElapsed();
-    arr.append(elapsed2);
-
-    return arr;
+    displaySortingResults(sortingFunctions, titles);
 }
-*/
 
 void Sorting::next_page()
 {
@@ -684,6 +701,12 @@ void Sorting::back_to_diagrams()
 void Sorting::back_to_menu()
 {
     ui->stackedWidget->setCurrentWidget(ui->page_main);
+}
+
+
+void Sorting::next_diagram()
+{
+    ui->stackedWidget->setCurrentWidget(ui->page_diagrams3);
 }
 
 
@@ -723,41 +746,3 @@ QChartView* Sorting::sortingHelper(std::function<QList<long long>()> sortingFunc
     QChartView *chartView = new QChartView(chart);
     return chartView;
 }
-
-/*
-void Sorting::lexic_alone()
-{
-    sortingHelper([this]() { return sortWords(); }, "Лексикографическая быстрая сортировка");
-}
-
-
-void Sorting::quick_alone()
-{
-    sortingHelper([this]() { return sortItems_quickSort(); }, "Быстрая сортировка");
-}
-
-
-void Sorting::heap_alone()
-{
-    sortingHelper([this]() { return sortItems_heap(); }, "Пирамидальная сортировка");
-}
-
-
-void Sorting::merge_alone()
-{
-    sortingHelper([this]() { return sortItems_merge(); }, "Сортировка слиянием");
-}
-
-
-void Sorting::insert_alone()
-{
-    sortingHelper([this]() { return sortItems_insertion(); }, "Сортировка выставками");
-}
-
-
-void Sorting::bubble_alone()
-{
-    sortingHelper([this]() { return sortItems_bubble(); }, "Сортировка пузырьком");
-}
-
-*/
