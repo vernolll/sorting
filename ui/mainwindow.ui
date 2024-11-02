@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="page_main">
      <widget class="QWidget" name="layoutWidget">
@@ -36,7 +36,7 @@
         <height>283</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0,0,0,0,0">
        <item>
         <widget class="QPushButton" name="pushButton_choic">
          <property name="text">
@@ -90,47 +90,76 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_diagrams">
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>40</y>
-        <width>1231</width>
-        <height>571</height>
+        <y>30</y>
+        <width>1241</width>
+        <height>681</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="100,0">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_500_double"/>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_500_char"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>1070</x>
-        <y>630</y>
-        <width>178</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pushButton_next">
-         <property name="text">
-          <string>Следующая</string>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
          </property>
-        </widget>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_500_double"/>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_500_char"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_menu">
-         <property name="text">
-          <string>Меню</string>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_next">
+             <property name="text">
+              <string>Следующая</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_menu">
+             <property name="text">
+              <string>Меню</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

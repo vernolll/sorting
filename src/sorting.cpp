@@ -17,7 +17,8 @@ void Sorting::parcing_txt(char** words, int maxSize)
 {
     std::ifstream file("D:/university/3 semestr/laba1_algos/build/1984-george-orwell.txt", std::ios::binary);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Failed to open file: D:/university/3 semestr/laba1_algos/build/1984-george-orwell.txt" << std::endl;
         return;
     }
@@ -25,22 +26,27 @@ void Sorting::parcing_txt(char** words, int maxSize)
     std::string line;
     int currentIndex = 0;
 
-    while (std::getline(file, line) && currentIndex < maxSize) {
+    while (std::getline(file, line) && currentIndex < maxSize)
+    {
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
         std::u16string utf16Line = converter.from_bytes(line);
 
         std::wistringstream wiss(std::wstring(utf16Line.begin(), utf16Line.end()));
         std::wstring word;
 
-        while (wiss >> word) {
-            const char* cstr = reinterpret_cast<const char*>(word.c_str());
-            if (currentIndex < maxSize) {
-                words[currentIndex] = const_cast<char*>(cstr);
+        while (wiss >> word)
+        {
+            if (currentIndex < maxSize)
+            {
+                std::string strWord(word.begin(), word.end());
+
+                words[currentIndex] = new char[strWord.length() + 1]; // +1 для нуль-терминатора
+                std::strcpy(words[currentIndex], strWord.c_str());
+
                 currentIndex++;
             }
         }
     }
-
     file.close();
 }
 
@@ -158,6 +164,8 @@ void Sorting::all_kind()
             chart->addAxis(axisY, Qt::AlignLeft);
             series->attachAxis(axisY);
 
+            axisX->setVisible(false);
+
             if (typeIndex == 0)
             {
                 layouts[layoutIndex]->addWidget(new QChartView(chart));
@@ -174,6 +182,7 @@ void Sorting::all_kind()
     ui->stackedWidget->setCurrentWidget(ui->page_diagrams);
     ui->pushButton_next->show();
 }
+
 
 
 void Sorting::displaySortingResults(
@@ -225,16 +234,18 @@ void Sorting::displaySortingResults(
 template<typename T>
 QVector<qint64> Sorting::sortItems(std::function<void(T*, int)> sortFunction)
 {
-    const QVector<int>& sizes = {500, 1000, 500};
+    const QVector<int> sizes = {500, 1000, 500};
     QVector<qint64> arr;
 
-    for (int size : sizes) {
+    for (int size : sizes)
+    {
         T* massive = new T[size];
 
         if constexpr (std::is_same<T, double>::value)
         {
             parcing(massive, size);
-        } else if constexpr (std::is_same<T, char*>::value)
+        }
+        else if constexpr (std::is_same<T, char*>::value)
         {
             parcing_txt(massive, size);
         }
@@ -250,6 +261,7 @@ QVector<qint64> Sorting::sortItems(std::function<void(T*, int)> sortFunction)
 
     return arr;
 }
+
 
 template<typename T>
 QVector<qint64> Sorting::sortItems_select()
@@ -304,18 +316,23 @@ void Sorting::choice(T* massive, int size)
                 }
             } else if constexpr (std::is_same<T, char*>::value)
             {
-                if (strcmp(massive[j], massive[minIndex]) < 0)
+                // Проверка на null для строк
+                if (massive[j] && massive[minIndex] && strcmp(massive[j], massive[minIndex]) < 0)
                 {
                     minIndex = j;
                 }
             }
         }
 
-        T temp = massive[minIndex];
-        massive[minIndex] = massive[i];
-        massive[i] = temp;
+        if (minIndex != i)
+        {
+            T temp = massive[minIndex];
+            massive[minIndex] = massive[i];
+            massive[i] = temp;
+        }
     }
 }
+
 
 template<typename T>
 QVector<qint64> Sorting::sortItems_bubble()
@@ -341,11 +358,22 @@ void Sorting::bubble(T* massive, int size)
     {
         for (int j = 0; j < size - i - 1; j++)
         {
-            if (massive[j] > massive[j + 1])
+            if constexpr (std::is_same<T, char*>::value)
             {
-                T temp = massive[j];
-                massive[j] = massive[j + 1];
-                massive[j + 1] = temp;
+                if (strcmp(massive[j], massive[j + 1]) > 0)
+                {
+                    T temp = massive[j];
+                    massive[j] = massive[j + 1];
+                    massive[j + 1] = temp;
+                }
+            }
+            else
+            {
+                if (massive[j] > massive[j + 1]) {
+                    T temp = massive[j];
+                    massive[j] = massive[j + 1];
+                    massive[j + 1] = temp;
+                }
             }
         }
     }
@@ -394,10 +422,21 @@ void Sorting::insertion(T* massive, int size)
         key = massive[i];
         int j = i - 1;
 
-        while (j >= 0 && massive[j] > key)
+        if constexpr (std::is_same<T, char*>::value)
         {
-            massive[j + 1] = massive[j];
-            j = j - 1;
+            while (j >= 0 && strcmp(massive[j], key) > 0)
+            {
+                massive[j + 1] = massive[j];
+                j = j - 1;
+            }
+        }
+        else
+        {
+            while (j >= 0 && massive[j] > key)
+            {
+                massive[j + 1] = massive[j];
+                j = j - 1;
+            }
         }
         massive[j + 1] = key;
     }
@@ -442,14 +481,25 @@ template<typename T>
 void Sorting::heapify(T* massive, int size, int i)
 {
     int largest = i;
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
+    int l = 2 * i + 1; // Левый дочерний узел
+    int r = 2 * i + 2; // Правый дочерний узел
 
-    if (l < size && massive[l] > massive[largest])
-        largest = l;
+    if constexpr (std::is_same<T, char*>::value)
+    {
+        if (l < size && strcmp(massive[l], massive[largest]) > 0)
+            largest = l;
 
-    if (r < size && massive[r] > massive[largest])
-        largest = r;
+        if (r < size && strcmp(massive[r], massive[largest]) > 0)
+            largest = r;
+    }
+    else
+    {
+        if (l < size && massive[l] > massive[largest])
+            largest = l;
+
+        if (r < size && massive[r] > massive[largest])
+            largest = r;
+    }
 
     if (largest != i)
     {
@@ -463,9 +513,11 @@ void Sorting::heapify(T* massive, int size, int i)
 template<typename T>
 void Sorting::heap(T* massive, int size)
 {
+    // Построение кучи (heap)
     for (int i = size / 2 - 1; i >= 0; i--)
         heapify(massive, size, i);
 
+    // Извлечение элементов из кучи один за другим
     for (int i = size - 1; i > 0; i--)
     {
         T temp = massive[0];
@@ -514,9 +566,8 @@ template<typename T>
 void Sorting::merge_(T* massive, int l, int m, int r)
 {
     int i, j, k;
-    // вычисление длины левой части массива
+    // вычисление длины левой и правой частей массива
     int n1 = m - l + 1;
-    // вычисление длины правой части массива
     int n2 = r - m;
 
     T* L = new T[n1];
@@ -530,17 +581,34 @@ void Sorting::merge_(T* massive, int l, int m, int r)
     i = 0;
     j = 0;
     k = l;
+
     while (i < n1 && j < n2)
     {
-        if (L[i] <= R[j])
+        if constexpr (std::is_same<T, char*>::value)
         {
-            massive[k] = L[i];
-            i++;
+            if (strcmp(L[i], R[j]) <= 0)
+            {
+                massive[k] = L[i];
+                i++;
+            }
+            else
+            {
+                massive[k] = R[j];
+                j++;
+            }
         }
         else
         {
-            massive[k] = R[j];
-            j++;
+            if (L[i] <= R[j])
+            {
+                massive[k] = L[i];
+                i++;
+            }
+            else
+            {
+                massive[k] = R[j];
+                j++;
+            }
         }
         k++;
     }
@@ -571,7 +639,6 @@ void Sorting::mergeSort(T* massive, int l, int r)
     {
         int m = l + (r - l) / 2;
 
-        // Используем многопоточность только для крупных подмассивов
         if (r - l > threshold)
         {
             // Запускаем левую часть в отдельном потоке
@@ -590,7 +657,6 @@ void Sorting::mergeSort(T* massive, int l, int r)
             mergeSort(massive, m + 1, r);
         }
 
-        // Слияние отсортированных подмассивов
         merge_(massive, l, m, r);
     }
 }
@@ -643,31 +709,41 @@ void Sorting::quickSort(T* arr, int low, int high)
 
         for (int j = low; j < high; j++)
         {
-            if (arr[j] < pivot)
+            if constexpr (std::is_same<T, char*>::value)
             {
-                i++;
-                std::swap(arr[i], arr[j]);
+                if (strcmp(arr[j], pivot) < 0)
+                {
+                    i++;
+                    std::swap(arr[i], arr[j]);
+                }
+            }
+            else
+            {
+                if (arr[j] < pivot)
+                {
+                    i++;
+                    std::swap(arr[i], arr[j]);
+                }
             }
         }
 
         std::swap(arr[i + 1], arr[high]);
         int partitionIndex = i + 1;
 
-        // Если размер подмассива больше порога, выполняем многопоточную сортировку
         if (high - low > threshold)
         {
             auto leftFuture = std::async(std::launch::async, &Sorting::quickSort<T>, this, arr, low, partitionIndex - 1);
             quickSort(arr, partitionIndex + 1, high);
-            leftFuture.get(); // Ждем завершения левой части
+            leftFuture.get();
         }
         else
         {
-            // Однопоточная сортировка для небольших массивов
             quickSort(arr, low, partitionIndex - 1);
             quickSort(arr, partitionIndex + 1, high);
         }
     }
 }
+
 
 void Sorting::quick_alone()
 {
@@ -738,6 +814,7 @@ QChartView* Sorting::sortingHelper(std::function<QList<long long>()> sortingFunc
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
+    axisX->hide();
 
     QValueAxis *axisY = new QValueAxis();
     chart->addAxis(axisY, Qt::AlignLeft);
